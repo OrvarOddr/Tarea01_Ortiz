@@ -1,0 +1,11 @@
+\begin{tabular}{lrrp{0.43\textwidth}}
+\toprule
+Etapa & Filas & Columnas & Criterio \\
+\midrule
+Archivo original leído desde Excel & 171 & 44 & Incluye títulos, filas anuales y nota de fuente. \\
+Filas no vacías después de lectura & 170 & 44 & Se eliminan filas totalmente vacías. \\
+Filas mensuales identificadas & 156 & 44 & Se conservan registros cuyo campo fecha es mensual. \\
+Meses con producción nacional informada & 147 & 44 & Se filtra total\_chile mayor que cero. \\
+Dataset limpio en formato largo & 5694 & 5 & Una fila por fecha y empresa/faena con producción positiva. \\
+\bottomrule
+\end{tabular}

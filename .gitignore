@@ -1,0 +1,15 @@
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.venv
+.venv/
+.matplotlib/
+.DS_Store
+__MACOSX/
+.jupyter/
+.jupyter_data/
+.jupyter_runtime/
+.ipython/
+build/
+build_*/
+*.zip

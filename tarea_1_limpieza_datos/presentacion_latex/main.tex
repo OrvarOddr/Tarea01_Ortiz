@@ -1,0 +1,438 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage{ragged2e}
+
+\usetikzlibrary{positioning}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+
+\definecolor{cobre}{HTML}{B55A2A}
+\definecolor{cobrebrillo}{HTML}{D48A45}
+\definecolor{cobreoscuro}{HTML}{6B331B}
+\definecolor{mineral}{HTML}{182027}
+\definecolor{carbon}{HTML}{0E1216}
+\definecolor{arena}{HTML}{E8D4AD}
+\definecolor{verdeoxido}{HTML}{3F6B55}
+\definecolor{papel}{HTML}{F7F1E8}
+
+\setbeamercolor{normal text}{fg=mineral,bg=white}
+\setbeamercolor{frametitle}{fg=white,bg=carbon}
+\setbeamerfont{frametitle}{series=\bfseries,size=\Large}
+\setbeamerfont{footline}{size=\scriptsize}
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.9ex,dp=1.2ex,leftskip=0.45cm,rightskip=0.45cm]{frametitle}
+    \color{arena}Producción de cobre en Chile \hfill \insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}
+}
+
+\newcommand{\bgphoto}[3]{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=center] at (current page.center) {
+      \includegraphics[width=\paperwidth,height=\paperheight]{#1}
+    };
+    \fill[#2,opacity=#3] (current page.south west) rectangle (current page.north east);
+  \end{tikzpicture}
+}
+
+\newcommand{\copperband}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[cobre,opacity=0.90] (current page.south west) rectangle ([yshift=0.15cm]current page.south east);
+    \fill[cobrebrillo,opacity=0.85] (current page.south west) rectangle ([xshift=0.34\paperwidth,yshift=0.15cm]current page.south west);
+  \end{tikzpicture}
+}
+
+\newcommand{\panel}[2]{%
+  \begin{tikzpicture}
+    \node[
+      rounded corners=4pt,
+      fill=white,
+      fill opacity=0.88,
+      text opacity=1,
+      inner sep=8pt,
+      text width=#1,
+      align=left
+    ] {#2};
+  \end{tikzpicture}
+}
+
+\newcommand{\darkpanel}[2]{%
+  \begin{tikzpicture}
+    \node[
+      rounded corners=4pt,
+      fill=carbon,
+      fill opacity=0.86,
+      text opacity=1,
+      inner sep=8pt,
+      text width=#1,
+      align=left
+    ] {#2};
+  \end{tikzpicture}
+}
+
+\newcommand{\metriccard}[3]{%
+  \begin{tikzpicture}
+    \node[
+      rounded corners=5pt,
+      fill=white,
+      fill opacity=0.90,
+      text opacity=1,
+      draw=cobrebrillo,
+      line width=0.7pt,
+      inner sep=8pt,
+      minimum height=1.55cm,
+      text width=#1,
+      align=left
+    ] {
+      {\color{cobreoscuro}\scriptsize\bfseries #2}\\[-1pt]
+      {\color{mineral}\Large\bfseries #3}
+    };
+  \end{tikzpicture}
+}
+
+\newcommand{\slidetitle}[2]{%
+  {\color{#1}\Large\bfseries #2}\vspace{0.18cm}
+}
+
+\title{Producción mensual de cobre de mina en Chile}
+\subtitle{Análisis exploratorio, preprocesamiento y limpieza de datos}
+\author{Ciencia de Datos para Economía y Gestión}
+\date{Tarea 1}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/chuquicamata.jpg}{carbon}{0.46}
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[carbon,opacity=0.26] (current page.south west) rectangle (current page.north east);
+    \fill[carbon,opacity=0.58] (current page.south west) rectangle ([xshift=0.67\paperwidth]current page.north west);
+    \draw[cobrebrillo,line width=1.4pt] ([xshift=0.72cm,yshift=1.05cm]current page.south west) -- ([xshift=8.9cm,yshift=1.05cm]current page.south west);
+    \draw[arena,line width=0.45pt,opacity=0.75] ([xshift=0.72cm,yshift=0.82cm]current page.south west) -- ([xshift=6.2cm,yshift=0.82cm]current page.south west);
+    \node[anchor=north east, text opacity=0.10] at ([xshift=-0.55cm,yshift=-0.45cm]current page.north east) {\fontsize{76}{76}\selectfont\bfseries Cu};
+  \end{tikzpicture}
+
+  \vspace{1.25cm}
+  {\color{arena}\small\bfseries TAREA 1 \hspace{0.18cm} | \hspace{0.18cm} COCHILCO 2014--2026}
+
+  \vspace{0.32cm}
+  {\color{white}\fontsize{27}{29}\selectfont\bfseries Producción mensual\par}
+  \vspace{0.08cm}
+  {\color{white}\fontsize{27}{29}\selectfont\bfseries de cobre de mina\par}
+  \vspace{0.08cm}
+  {\color{white}\fontsize{27}{29}\selectfont\bfseries en Chile\par}
+
+  \vspace{0.28cm}
+  {\color{arena}\large Análisis exploratorio, limpieza y visualización de datos}
+
+  \vfill
+  {\color{white}\small Ciencia de Datos para Economía y Gestión \hfill Dataset oficial de producción minera}
+\end{frame}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/escondida.jpg}{carbon}{0.70}
+  \copperband
+  \vspace{0.45cm}
+  \slidetitle{white}{1. Objetivo y fuente de datos}
+
+  \vspace{0.15cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.56\textwidth}
+      \darkpanel{0.95\textwidth}{
+        {\color{arena}\large\bfseries Pregunta de trabajo}\\[4pt]
+        {\color{white}\textquestiondown{}Qué revela la producción mensual de cobre de mina en Chile cuando se limpia y reorganiza el archivo original de COCHILCO?}\\[8pt]
+        {\color{arena}\small Dataset oficial}\\[-2pt]
+        {\color{white}\small Producción de Cobre Mina por Empresa Mensual, en miles de toneladas métricas de cobre fino.}
+      }
+    \end{column}
+    \begin{column}{0.38\textwidth}
+      \panel{0.95\textwidth}{
+        \textbf{Período limpio}\\
+        Enero 2014 a marzo 2026\\[5pt]
+        \textbf{Unidad}\\
+        Miles de T.M. de cobre fino\\[5pt]
+        \textbf{Entrega}\\
+        Notebook + datos limpios + presentación
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/mineral_cobre.jpg}{white}{0.82}
+  \copperband
+  \vspace{0.4cm}
+  \slidetitle{mineral}{2. Del Excel bruto al dataset limpio}
+
+  \begin{center}
+    \begin{tikzpicture}[
+      flowstep/.style={rounded corners=5pt, fill=carbon, text=white, inner sep=8pt, text width=2.35cm, align=center},
+      arrow/.style={->, very thick, color=cobreoscuro}
+    ]
+      \node[flowstep] (a) {Excel COCHILCO\\con títulos y notas};
+      \node[flowstep, right=0.45cm of a] (b) {Filas mensuales\\identificadas};
+      \node[flowstep, right=0.45cm of b] (c) {Tipos corregidos\\fecha + números};
+      \node[flowstep, right=0.45cm of c] (d) {Datos limpios\\ancho y largo};
+      \draw[arrow] (a) -- (b);
+      \draw[arrow] (b) -- (c);
+      \draw[arrow] (c) -- (d);
+    \end{tikzpicture}
+  \end{center}
+
+  \vspace{0.15cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \panel{0.95\textwidth}{
+        \textbf{Problemas encontrados}\\
+        \begin{itemize}
+          \item Encabezados institucionales.
+          \item Resúmenes anuales mezclados.
+          \item Meses futuros sin dato informado.
+          \item Nombres de columnas no estandarizados.
+        \end{itemize}
+      }
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \panel{0.95\textwidth}{
+        \textbf{Decisiones aplicadas}\\
+        \begin{itemize}
+          \item Eliminar filas no mensuales.
+          \item Filtrar meses con total nacional igual a cero.
+          \item Convertir variables a tipos correctos.
+          \item Crear formato largo para analizar faenas.
+        \end{itemize}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/camion_mina.jpg}{carbon}{0.62}
+  \copperband
+  \vspace{0.4cm}
+  \slidetitle{white}{3. Radiografía del dataset}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.32\textwidth}
+      \metriccard{0.88\textwidth}{Formato ancho}{147 meses}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \metriccard{0.88\textwidth}{Variables}{44 columnas}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \metriccard{0.88\textwidth}{Formato largo}{5.694 registros}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.5cm}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.42\textwidth}
+      \panel{0.95\textwidth}{
+        \textbf{Producción total de Chile}\\[3pt]
+        \begin{tabular}{lr}
+        \toprule
+        Métrica & Valor \\
+        \midrule
+        Promedio & 464,5 \\
+        Mediana & 466,0 \\
+        Desv. estándar & 34,5 \\
+        Mínimo & 370,8 \\
+        Máximo & 563,6 \\
+        \bottomrule
+        \end{tabular}
+      }
+    \end{column}
+    \begin{column}{0.53\textwidth}
+      \darkpanel{0.95\textwidth}{
+        {\color{arena}\bfseries Lectura principal}\\[4pt]
+        {\color{white}La serie nacional se mueve en un rango relativamente estable, pero algunos meses aparecen fuera del comportamiento habitual y deben revisarse como posibles eventos económicos u operacionales.}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.90}
+  \copperband
+  \vspace{0.32cm}
+  \slidetitle{mineral}{4. Distribución de la producción nacional}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.64\textwidth}
+      \begin{tikzpicture}
+        \node[rounded corners=5pt, fill=white, draw=cobrebrillo, line width=0.6pt, inner sep=5pt] {
+          \includegraphics[width=0.95\textwidth]{graficos/hist_total_chile.png}
+        };
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.32\textwidth}
+      \panel{0.95\textwidth}{
+        \textbf{Por qué histograma}\\
+        La variable es numérica continua y permite observar frecuencia, dispersión y valores inusualmente altos o bajos.\\[6pt]
+        \textbf{Resultado}\\
+        La mayor parte de los meses se concentra cerca de 445 a 487 mil toneladas.
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/chuquicamata.jpg}{white}{0.88}
+  \copperband
+  \vspace{0.32cm}
+  \slidetitle{mineral}{5. Concentración por empresa y faena}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.58\textwidth}
+      \begin{tikzpicture}
+        \node[rounded corners=5pt, fill=white, fill opacity=0.94, text opacity=1, draw=cobrebrillo, line width=0.6pt, inner sep=5pt] {
+          \includegraphics[width=0.93\textwidth]{graficos/hist_empresas_faenas.png}
+        };
+      \end{tikzpicture}
+    \end{column}
+    \begin{column}{0.38\textwidth}
+      \panel{0.95\textwidth}{
+        \textbf{Faenas con mayor promedio mensual positivo}\\[3pt]
+        \begin{tabular}{lr}
+        \toprule
+        Faena & Prom. \\
+        \midrule
+        Escondida & 95,6 \\
+        Chuqui y R. Tomic & 51,3 \\
+        Collahuasi & 44,5 \\
+        El Teniente & 35,2 \\
+        Los Pelambres & 29,0 \\
+        \bottomrule
+        \end{tabular}\\[6pt]
+        Promedio calculado solo en meses con producción positiva. Pocas operaciones grandes explican una parte importante del volumen nacional.
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/escondida.jpg}{carbon}{0.82}
+  \copperband
+  \vspace{0.32cm}
+  \slidetitle{white}{6. Relaciones con la producción nacional}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.49\textwidth}
+      \begin{tikzpicture}
+        \node[rounded corners=5pt, fill=white, inner sep=4pt] {
+          \includegraphics[width=0.94\textwidth]{graficos/scatter_codelco_total_chile.png}
+        };
+      \end{tikzpicture}
+      \vspace{0.08cm}
+      \centering{\color{arena}\bfseries Correlación Codelco--Chile: 0,77}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \begin{tikzpicture}
+        \node[rounded corners=5pt, fill=white, inner sep=4pt] {
+          \includegraphics[width=0.94\textwidth]{graficos/scatter_escondida_total_chile.png}
+        };
+      \end{tikzpicture}
+      \vspace{0.08cm}
+      \centering{\color{arena}\bfseries Correlación Escondida--Chile: 0,44}
+    \end{column}
+  \end{columns}
+
+  \vspace{0.18cm}
+  \darkpanel{0.96\textwidth}{
+    {\color{white}Codelco, como agregado, se mueve más cerca del total nacional que una faena individual, aunque Escondida sea la operación de mayor producción promedio positiva.}
+  }
+\end{frame}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/camion_mina.jpg}{white}{0.84}
+  \copperband
+  \vspace{0.32cm}
+  \slidetitle{mineral}{7. Outliers: no todo valor extremo es error}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.52\textwidth}
+      \panel{0.95\textwidth}{
+        \textbf{Meses detectados por rango intercuartil}\\[3pt]
+        \begin{tabular}{lr}
+        \toprule
+        Mes & Total Chile \\
+        \midrule
+        Feb. 2017 & 370,8 \\
+        Mar. 2017 & 373,1 \\
+        Dic. 2018 & 550,1 \\
+        Dic. 2019 & 551,8 \\
+        Feb. 2023 & 380,0 \\
+        Dic. 2024 & 563,6 \\
+        Feb. 2026 & 375,4 \\
+        \bottomrule
+        \end{tabular}
+      }
+    \end{column}
+    \begin{column}{0.43\textwidth}
+      \darkpanel{0.95\textwidth}{
+        {\color{arena}\bfseries Decisión}\\[4pt]
+        {\color{white}Se conservaron estos meses porque pueden representar mantenciones, paralizaciones, cambios operacionales o cierres de periodo. En minería, un outlier puede ser información, no ruido.}
+      }
+      \vspace{0.22cm}
+      \includegraphics[width=0.95\textwidth,height=0.25\textheight,keepaspectratio]{imagenes/mineral_cobre.jpg}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/catodo_cobre.jpg}{carbon}{0.76}
+  \copperband
+  \vspace{0.42cm}
+  \slidetitle{white}{8. Conclusiones}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.52\textwidth}
+      \darkpanel{0.96\textwidth}{
+        {\color{arena}\large\bfseries Hallazgo central}\\[4pt]
+        {\color{white}La producción mensual chilena de cobre es relativamente estable, pero está concentrada en pocas operaciones grandes y presenta meses puntuales que merecen explicación económica u operacional.}
+      }
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \panel{0.95\textwidth}{
+        \begin{itemize}
+          \item Escondida lidera por producción promedio positiva.
+          \item Codelco explica mejor el movimiento del total nacional.
+          \item La limpieza fue necesaria por la estructura original del Excel.
+          \item El formato largo deja el dataset listo para análisis posteriores.
+        \end{itemize}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/mineral_cobre.jpg}{white}{0.88}
+  \copperband
+  \vspace{0.35cm}
+  \slidetitle{mineral}{9. Fuentes y créditos visuales}
+
+  \panel{0.92\textwidth}{
+    \small
+    \begin{itemize}
+      \item Datos: COCHILCO, ``Producción de Cobre Mina por Empresa Mensual''.
+      \item Chuquicamata: Owen Cliffe / Zootalures, Wikimedia Commons, CC BY-SA 3.0.
+      \item Escondida: NASA Johnson Space Center / Expedition 22 crew, Wikimedia Commons, dominio público en Estados Unidos.
+      \item Cátodo de cobre: WeHaKa, Wikimedia Commons, CC BY-SA 4.0.
+      \item Mineral de cobre: S. Rae, Wikimedia Commons, CC BY 2.0.
+      \item Camión minero: Phil Whitehouse, Wikimedia Commons, CC BY 2.0.
+      \item Gráficos: elaboración propia en Python a partir de COCHILCO.
+    \end{itemize}
+  }
+
+  \vfill
+  \begin{center}
+    {\color{cobreoscuro}\LARGE\bfseries Gracias}
+  \end{center}
+\end{frame}
+
+\end{document}
