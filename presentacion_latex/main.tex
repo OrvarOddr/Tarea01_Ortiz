@@ -67,8 +67,7 @@
 
 \setbeamertemplate{headline}{%
   \begin{beamercolorbox}[wd=\paperwidth,ht=4.4ex,dp=1.2ex,leftskip=0.34cm,rightskip=0.34cm]{headlinebar}
-    \raisebox{-0.58ex}{\includegraphics[height=3.6ex]{imagenes/logo_universidad_biobio.png}}%
-    \hspace{0.22cm}{\color{white}\scriptsize\bfseries Ciencia de Datos para Economía y Gestión}%
+    {\color{arena}\scriptsize Ciencia de Datos para Economía y Gestión}%
     \hfill{\color{arena}\scriptsize Tarea 1 | Limpieza de datos mineros}%
     \hspace{0.24cm}\progressdots
   \end{beamercolorbox}
@@ -92,10 +91,7 @@
 \newcommand{\copperband}{%
   \begin{tikzpicture}[remember picture,overlay]
     \fill[carbon,opacity=0.94] (current page.north west) rectangle ([yshift=-0.48cm]current page.north east);
-    \node[anchor=west] at ([xshift=0.34cm,yshift=-0.24cm]current page.north west) {
-      \includegraphics[height=0.34cm]{imagenes/logo_universidad_biobio.png}
-    };
-    \node[anchor=west, text=white, font=\scriptsize\bfseries] at ([xshift=0.74cm,yshift=-0.24cm]current page.north west) {Ciencia de Datos para Economía y Gestión};
+    \node[anchor=west, text=arena, font=\scriptsize] at ([xshift=0.34cm,yshift=-0.24cm]current page.north west) {Ciencia de Datos para Economía y Gestión};
     \node[anchor=east, text=arena, font=\scriptsize] at ([xshift=-3.85cm,yshift=-0.24cm]current page.north east) {Tarea 1 | Limpieza de datos mineros};
     \node[anchor=east] at ([xshift=-0.34cm,yshift=-0.24cm]current page.north east) {\progressdots};
     \fill[cobre,opacity=0.90] (current page.south west) rectangle ([yshift=0.15cm]current page.south east);
