@@ -13,7 +13,6 @@
 
 \usetikzlibrary{positioning}
 \setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{headline}{}
 
 \definecolor{cobre}{HTML}{B55A2A}
 \definecolor{cobrebrillo}{HTML}{D48A45}
@@ -49,11 +48,35 @@
 
 \setbeamercolor{normal text}{fg=mineral,bg=white}
 \setbeamercolor{frametitle}{fg=white,bg=carbon}
+\setbeamercolor{headlinebar}{fg=white,bg=carbon}
+\setbeamercolor{footlinebar}{fg=arena,bg=carbon}
 \setbeamerfont{frametitle}{series=\bfseries,size=\Large}
 \setbeamerfont{footline}{size=\scriptsize}
+
+\newcommand{\progressdots}{%
+  \begin{tikzpicture}[baseline=-0.45ex]
+    \foreach \i in {1,...,\inserttotalframenumber} {
+      \ifnum\i=\insertframenumber
+        \fill[cobrebrillo] (\i*0.145,0) circle (1.55pt);
+      \else
+        \fill[white,opacity=0.34] (\i*0.145,0) circle (1.18pt);
+      \fi
+    }
+  \end{tikzpicture}%
+}
+
+\setbeamertemplate{headline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=4.4ex,dp=1.2ex,leftskip=0.34cm,rightskip=0.34cm]{headlinebar}
+    \raisebox{-0.58ex}{\includegraphics[height=3.6ex]{imagenes/logo_universidad_biobio.png}}%
+    \hspace{0.22cm}{\color{white}\scriptsize\bfseries Universidad del Bío-Bío}%
+    \hfill{\color{arena}\scriptsize Tarea 1 | Limpieza de datos mineros}%
+    \hspace{0.24cm}\progressdots
+  \end{beamercolorbox}
+}
+
 \setbeamertemplate{footline}{%
-  \begin{beamercolorbox}[wd=\paperwidth,ht=2.9ex,dp=1.2ex,leftskip=0.45cm,rightskip=0.45cm]{frametitle}
-    \color{arena}Producción de cobre en Chile \hfill \insertframenumber/\inserttotalframenumber
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.9ex,dp=1.15ex,leftskip=0.45cm,rightskip=0.45cm]{footlinebar}
+    \color{arena}Producción de cobre en Chile \hfill Ciencia de Datos para Economía y Gestión \hfill \insertframenumber/\inserttotalframenumber
   \end{beamercolorbox}
 }
 
@@ -68,6 +91,13 @@
 
 \newcommand{\copperband}{%
   \begin{tikzpicture}[remember picture,overlay]
+    \fill[carbon,opacity=0.94] (current page.north west) rectangle ([yshift=-0.48cm]current page.north east);
+    \node[anchor=west] at ([xshift=0.34cm,yshift=-0.24cm]current page.north west) {
+      \includegraphics[height=0.34cm]{imagenes/logo_universidad_biobio.png}
+    };
+    \node[anchor=west, text=white, font=\scriptsize\bfseries] at ([xshift=0.74cm,yshift=-0.24cm]current page.north west) {Universidad del Bío-Bío};
+    \node[anchor=east, text=arena, font=\scriptsize] at ([xshift=-3.85cm,yshift=-0.24cm]current page.north east) {Tarea 1 | Limpieza de datos mineros};
+    \node[anchor=east] at ([xshift=-0.34cm,yshift=-0.24cm]current page.north east) {\progressdots};
     \fill[cobre,opacity=0.90] (current page.south west) rectangle ([yshift=0.15cm]current page.south east);
     \fill[cobrebrillo,opacity=0.85] (current page.south west) rectangle ([xshift=0.34\paperwidth,yshift=0.15cm]current page.south west);
   \end{tikzpicture}
@@ -140,6 +170,9 @@
     \draw[cobrebrillo,line width=1.4pt] ([xshift=0.72cm,yshift=1.05cm]current page.south west) -- ([xshift=8.9cm,yshift=1.05cm]current page.south west);
     \draw[arena,line width=0.45pt,opacity=0.75] ([xshift=0.72cm,yshift=0.82cm]current page.south west) -- ([xshift=6.2cm,yshift=0.82cm]current page.south west);
     \node[anchor=north east, text opacity=0.10] at ([xshift=-0.55cm,yshift=-0.45cm]current page.north east) {\fontsize{76}{76}\selectfont\bfseries Cu};
+    \node[anchor=north east, fill=white, fill opacity=0.90, text opacity=1, rounded corners=3pt, inner sep=4pt] at ([xshift=-0.55cm,yshift=-0.45cm]current page.north east) {
+      \includegraphics[height=1.05cm]{imagenes/logo_universidad_biobio.png}
+    };
   \end{tikzpicture}
 
   \vspace{1.25cm}
@@ -159,7 +192,7 @@
   {\color{white}\small Ciencia de Datos para Economía y Gestión \hfill Dataset oficial de producción minera}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/escondida.jpg}{carbon}{0.70}
   \copperband
   \vspace{0.45cm}
@@ -188,7 +221,7 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/catodo_cobre.jpg}{white}{0.84}
   \copperband
   \vspace{0.34cm}
@@ -233,7 +266,7 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/mineral_cobre.jpg}{white}{0.82}
   \copperband
   \vspace{0.4cm}
@@ -281,7 +314,7 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.88}
   \copperband
   \vspace{0.34cm}
@@ -318,7 +351,7 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile,plain]
+\begin{frame}[fragile]
   \bgphoto{imagenes/catodo_cobre.jpg}{white}{0.86}
   \copperband
   \vspace{0.34cm}
@@ -351,7 +384,7 @@ df_raw.shape
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile,plain]
+\begin{frame}[fragile]
   \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.88}
   \copperband
   \vspace{0.34cm}
@@ -385,7 +418,7 @@ df = df.rename(columns={df.columns[0]: "fecha"})
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile,plain]
+\begin{frame}[fragile]
   \bgphoto{imagenes/chuquicamata.jpg}{white}{0.88}
   \copperband
   \vspace{0.34cm}
@@ -424,7 +457,7 @@ df_largo = df_largo[
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile,plain]
+\begin{frame}[fragile]
   \bgphoto{imagenes/camion_mina.jpg}{carbon}{0.68}
   \copperband
   \vspace{0.34cm}
@@ -461,7 +494,7 @@ resumen_empresas.to_csv(
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/camion_mina.jpg}{carbon}{0.62}
   \copperband
   \vspace{0.4cm}
@@ -507,7 +540,7 @@ resumen_empresas.to_csv(
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.90}
   \copperband
   \vspace{0.32cm}
@@ -532,7 +565,7 @@ resumen_empresas.to_csv(
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/chuquicamata.jpg}{white}{0.88}
   \copperband
   \vspace{0.32cm}
@@ -566,7 +599,7 @@ resumen_empresas.to_csv(
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/escondida.jpg}{carbon}{0.82}
   \copperband
   \vspace{0.32cm}
@@ -599,7 +632,7 @@ resumen_empresas.to_csv(
   }
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/catodo_cobre.jpg}{white}{0.84}
   \copperband
   \vspace{0.34cm}
@@ -639,7 +672,7 @@ resumen_empresas.to_csv(
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.88}
   \copperband
   \vspace{0.34cm}
@@ -678,7 +711,7 @@ resumen_empresas.to_csv(
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/camion_mina.jpg}{white}{0.84}
   \copperband
   \vspace{0.32cm}
@@ -714,7 +747,7 @@ resumen_empresas.to_csv(
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/escondida.jpg}{carbon}{0.78}
   \copperband
   \vspace{0.34cm}
@@ -753,7 +786,7 @@ resumen_empresas.to_csv(
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/catodo_cobre.jpg}{carbon}{0.76}
   \copperband
   \vspace{0.42cm}
@@ -779,7 +812,7 @@ resumen_empresas.to_csv(
   \end{columns}
 \end{frame}
 
-\begin{frame}[plain]
+\begin{frame}
   \bgphoto{imagenes/mineral_cobre.jpg}{white}{0.88}
   \copperband
   \vspace{0.35cm}
