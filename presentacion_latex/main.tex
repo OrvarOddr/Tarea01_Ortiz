@@ -8,6 +8,7 @@
 \usepackage{booktabs}
 \usepackage{tikz}
 \usepackage{ragged2e}
+\usepackage{array}
 
 \usetikzlibrary{positioning}
 \setbeamertemplate{navigation symbols}{}
@@ -138,7 +139,7 @@
   \bgphoto{imagenes/escondida.jpg}{carbon}{0.70}
   \copperband
   \vspace{0.45cm}
-  \slidetitle{white}{1. Objetivo y fuente de datos}
+  \slidetitle{white}{1. Objetivo, fuente y unidad}
 
   \vspace{0.15cm}
   \begin{columns}[T,onlytextwidth]
@@ -164,10 +165,55 @@
 \end{frame}
 
 \begin{frame}[plain]
+  \bgphoto{imagenes/catodo_cobre.jpg}{white}{0.84}
+  \copperband
+  \vspace{0.34cm}
+  \slidetitle{mineral}{2. Variables y formatos usados}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \panel{0.95\textwidth}{
+        \textbf{Dos formas de mirar la misma base}\\[3pt]
+        \scriptsize
+        \begin{tabular}{p{0.25\textwidth}p{0.58\textwidth}}
+        \toprule
+        Formato & Uso principal \\
+        \midrule
+        Ancho & Una fila por mes y una columna por faena. Sirve para describir el total nacional, correlaciones y series mensuales. \\
+        Largo & Una fila por mes y faena. Sirve para comparar faenas, calcular rankings y ver concentración productiva. \\
+        \bottomrule
+        \end{tabular}
+      }
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \darkpanel{0.95\textwidth}{
+        {\color{arena}\bfseries Variables centrales}\\[4pt]
+        {\color{white}\small
+        \begin{tabular}{ll}
+        \toprule
+        Variable & Rol en el análisis \\
+        \midrule
+        total\_chile & Producción nacional \\
+        total\_codelco & Agregado institucional \\
+        escondida & Faena privada mayor \\
+        collahuasi & Faena privada relevante \\
+        los\_pelambres & Faena privada relevante \\
+        \bottomrule
+        \end{tabular}}
+      }
+      \vspace{0.18cm}
+      \panel{0.95\textwidth}{
+        \small El formato largo no inventa datos: solo reordena las columnas de faenas en filas para poder compararlas.
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
   \bgphoto{imagenes/mineral_cobre.jpg}{white}{0.82}
   \copperband
   \vspace{0.4cm}
-  \slidetitle{mineral}{2. Del Excel bruto al dataset limpio}
+  \slidetitle{mineral}{3. Del Excel bruto al dataset limpio}
 
   \begin{center}
     \begin{tikzpicture}[
@@ -212,10 +258,47 @@
 \end{frame}
 
 \begin{frame}[plain]
+  \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.88}
+  \copperband
+  \vspace{0.34cm}
+  \slidetitle{mineral}{4. Limpieza cuantificada}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.62\textwidth}
+      \panel{0.97\textwidth}{
+        \textbf{Cambios de estructura}\\[3pt]
+        \scriptsize
+        \begin{tabular}{lrrp{0.27\textwidth}}
+        \toprule
+        Etapa & Filas & Cols. & Criterio \\
+        \midrule
+        Excel leído & 171 & 44 & Incluye títulos, años y fuente. \\
+        Sin filas vacías & 170 & 44 & Se eliminan filas totalmente vacías. \\
+        Solo meses & 156 & 44 & Se conservan fechas mensuales. \\
+        Total Chile $>$ 0 & 147 & 44 & Se dejan meses con dato informado. \\
+        Formato largo & 5.694 & 5 & Fecha, faena y producción positiva. \\
+        \bottomrule
+        \end{tabular}
+      }
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \darkpanel{0.95\textwidth}{
+        {\color{arena}\bfseries Acciones implementadas}\\[4pt]
+        {\color{white}\small
+        $\triangleright$ Filtrado de filas no mensuales.\\[3pt]
+        $\triangleright$ Conversión de fechas y columnas numéricas.\\[3pt]
+        $\triangleright$ Eliminación de meses sin producción nacional informada.\\[3pt]
+        $\triangleright$ Transformación a formato largo.}
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
   \bgphoto{imagenes/camion_mina.jpg}{carbon}{0.62}
   \copperband
   \vspace{0.4cm}
-  \slidetitle{white}{3. Radiografía del dataset}
+  \slidetitle{white}{5. Radiografía del dataset}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.32\textwidth}
@@ -233,16 +316,17 @@
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.42\textwidth}
       \panel{0.95\textwidth}{
-        \textbf{Producción total de Chile}\\[3pt]
-        \begin{tabular}{lr}
+        \textbf{Estadísticos descriptivos}\\[3pt]
+        \scriptsize
+        \begin{tabular}{lrrr}
         \toprule
-        Métrica & Valor \\
+        Variable & Media & Mín. & Máx. \\
         \midrule
-        Promedio & 464,5 \\
-        Mediana & 466,0 \\
-        Desv. estándar & 34,5 \\
-        Mínimo & 370,8 \\
-        Máximo & 563,6 \\
+        Total Chile & 464,5 & 370,8 & 563,6 \\
+        Total Codelco & 129,6 & 79,9 & 177,7 \\
+        Escondida & 95,0 & 0,0 & 133,6 \\
+        Collahuasi & 44,5 & 17,0 & 60,3 \\
+        Los Pelambres & 29,0 & 14,0 & 38,1 \\
         \bottomrule
         \end{tabular}
       }
@@ -260,7 +344,7 @@
   \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.90}
   \copperband
   \vspace{0.32cm}
-  \slidetitle{mineral}{4. Distribución de la producción nacional}
+  \slidetitle{mineral}{6. Distribución de la producción nacional}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.64\textwidth}
@@ -285,7 +369,7 @@
   \bgphoto{imagenes/chuquicamata.jpg}{white}{0.88}
   \copperband
   \vspace{0.32cm}
-  \slidetitle{mineral}{5. Concentración por empresa y faena}
+  \slidetitle{mineral}{7. Concentración por empresa y faena}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.58\textwidth}
@@ -319,7 +403,7 @@
   \bgphoto{imagenes/escondida.jpg}{carbon}{0.82}
   \copperband
   \vspace{0.32cm}
-  \slidetitle{white}{6. Relaciones con la producción nacional}
+  \slidetitle{white}{8. Relaciones con la producción nacional}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.49\textwidth}
@@ -349,10 +433,89 @@
 \end{frame}
 
 \begin{frame}[plain]
+  \bgphoto{imagenes/catodo_cobre.jpg}{white}{0.84}
+  \copperband
+  \vspace{0.34cm}
+  \slidetitle{mineral}{9. Correlaciones relevantes}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \panel{0.96\textwidth}{
+        \textbf{Mayor relación con total\_chile}\\[3pt]
+        \scriptsize
+        \begin{tabular}{lrl}
+        \toprule
+        Variable & Corr. & Intensidad \\
+        \midrule
+        total\_codelco & 0,77 & Alta \\
+        chuqui\_y\_r\_tomic & 0,75 & Alta \\
+        chuquicamata & 0,71 & Alta \\
+        el\_teniente & 0,59 & Media \\
+        los\_pelambres & 0,57 & Media \\
+        escondida & 0,44 & Media \\
+        collahuasi & 0,30 & Baja \\
+        \bottomrule
+        \end{tabular}
+      }
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \darkpanel{0.96\textwidth}{
+        {\color{arena}\bfseries Lectura}\\[4pt]
+        {\color{white}\small
+        La relación más fuerte aparece en Codelco porque agrupa varias divisiones. En cambio, una faena individual puede ser grande, pero no necesariamente explica sola el movimiento nacional mensual.}
+      }
+      \vspace{0.22cm}
+      \panel{0.96\textwidth}{
+        \small Este punto justifica el uso de scatter plots: ambas variables son numéricas y permiten observar asociación, dispersión y meses alejados del patrón.
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
+  \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.88}
+  \copperband
+  \vspace{0.34cm}
+  \slidetitle{mineral}{10. Valores faltantes y meses sin dato}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.52\textwidth}
+      \panel{0.96\textwidth}{
+        \textbf{Antes del filtro final}\\[3pt]
+        \scriptsize
+        \begin{tabular}{lrr}
+        \toprule
+        Variable & Faltantes & Porcentaje \\
+        \midrule
+        chuquicamata & 9 & 5,77\% \\
+        mantoverde & 9 & 5,77\% \\
+        los\_pelambres & 9 & 5,77\% \\
+        zaldivar & 9 & 5,77\% \\
+        centinela\_sulfuros & 9 & 5,77\% \\
+        quebrada\_blanca & 9 & 5,77\% \\
+        \bottomrule
+        \end{tabular}
+      }
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \darkpanel{0.96\textwidth}{
+        {\color{arena}\bfseries Interpretación}\\[4pt]
+        {\color{white}\small
+        Los faltantes se concentran en meses donde el archivo todavía no informa producción nacional completa. Por eso no se imputan: se filtran los meses con total\_chile igual a cero.}
+      }
+      \vspace{0.22cm}
+      \panel{0.96\textwidth}{
+        \small Después de limpiar, el dataset ancho queda con 147 meses, 44 columnas y sin filas duplicadas. El período final usado es enero 2014 a marzo 2026.
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
   \bgphoto{imagenes/camion_mina.jpg}{white}{0.84}
   \copperband
   \vspace{0.32cm}
-  \slidetitle{mineral}{7. Outliers: no todo valor extremo es error}
+  \slidetitle{mineral}{11. Outliers: no todo valor extremo es error}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.52\textwidth}
@@ -385,10 +548,49 @@
 \end{frame}
 
 \begin{frame}[plain]
+  \bgphoto{imagenes/escondida.jpg}{carbon}{0.78}
+  \copperband
+  \vspace{0.34cm}
+  \slidetitle{white}{12. Asimetría y concentración}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.50\textwidth}
+      \panel{0.96\textwidth}{
+        \textbf{Medidas de forma}\\[3pt]
+        \scriptsize
+        \begin{tabular}{lrr}
+        \toprule
+        Variable & Asimetría & Curtosis \\
+        \midrule
+        total\_chile & -0,12 & 0,69 \\
+        total\_codelco & -0,13 & -0,29 \\
+        escondida & -1,53 & 7,48 \\
+        collahuasi & -0,36 & 0,48 \\
+        los\_pelambres & -0,76 & 0,91 \\
+        el\_teniente & -0,72 & 0,57 \\
+        \bottomrule
+        \end{tabular}
+      }
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \darkpanel{0.96\textwidth}{
+        {\color{arena}\bfseries Resultado clave}\\[4pt]
+        {\color{white}\small
+        Escondida destaca por asimetría negativa y curtosis alta. Esto indica meses especialmente bajos y presencia de valores extremos, coherente con una faena de gran escala que puede alterar el total nacional cuando se desvía de su nivel habitual.}
+      }
+      \vspace{0.20cm}
+      \panel{0.96\textwidth}{
+        \small La decisión fue no imputar ni borrar automáticamente estos valores, sino tratarlos como observaciones relevantes del proceso productivo.
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[plain]
   \bgphoto{imagenes/catodo_cobre.jpg}{carbon}{0.76}
   \copperband
   \vspace{0.42cm}
-  \slidetitle{white}{8. Conclusiones}
+  \slidetitle{white}{13. Conclusiones}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.52\textwidth}
@@ -414,7 +616,7 @@
   \bgphoto{imagenes/mineral_cobre.jpg}{white}{0.88}
   \copperband
   \vspace{0.35cm}
-  \slidetitle{mineral}{9. Fuentes y créditos visuales}
+  \slidetitle{mineral}{14. Fuentes y créditos visuales}
 
   \panel{0.92\textwidth}{
     \small
