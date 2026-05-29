@@ -9,6 +9,7 @@
 \usepackage{tikz}
 \usepackage{ragged2e}
 \usepackage{array}
+\usepackage{listings}
 
 \usetikzlibrary{positioning}
 \setbeamertemplate{navigation symbols}{}
@@ -22,6 +23,29 @@
 \definecolor{arena}{HTML}{E8D4AD}
 \definecolor{verdeoxido}{HTML}{3F6B55}
 \definecolor{papel}{HTML}{F7F1E8}
+\definecolor{codigofondo}{HTML}{F7F1E8}
+\definecolor{codigoborde}{HTML}{C97A3A}
+
+\lstdefinestyle{codexpython}{
+  language=Python,
+  basicstyle=\ttfamily\tiny,
+  keywordstyle=\bfseries\color{cobreoscuro},
+  stringstyle=\color{verdeoxido},
+  commentstyle=\color{cobreoscuro},
+  showstringspaces=false,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  rulecolor=\color{codigoborde},
+  backgroundcolor=\color{codigofondo},
+  xleftmargin=0.08cm,
+  xrightmargin=0.08cm,
+  framexleftmargin=0.08cm,
+  framexrightmargin=0.08cm,
+  aboveskip=3pt,
+  belowskip=3pt
+}
 
 \setbeamercolor{normal text}{fg=mineral,bg=white}
 \setbeamercolor{frametitle}{fg=white,bg=carbon}
@@ -294,11 +318,154 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}[fragile,plain]
+  \bgphoto{imagenes/catodo_cobre.jpg}{white}{0.86}
+  \copperband
+  \vspace{0.34cm}
+  \slidetitle{mineral}{5. ETL: extracción}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.58\textwidth}
+\begin{lstlisting}[style=codexpython]
+archivo = DATOS / "produccion_cobre_mina_empresa_mensual.xlsx"
+
+df_raw = pd.read_excel(
+    archivo,
+    sheet_name=0,
+    header=6,
+)
+
+df_raw.shape
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \darkpanel{0.95\textwidth}{
+        {\color{arena}\bfseries Qué hace esta fase}\\[4pt]
+        {\color{white}\small Se toma el Excel original de COCHILCO y se carga en Python. No se corrige nada todavía: el objetivo es conservar una copia bruta para revisar cómo venía el archivo.}
+      }
+      \vspace{0.18cm}
+      \panel{0.95\textwidth}{
+        \small El parámetro \texttt{header=6} indica que los nombres de columnas reales comienzan en esa fila del Excel.
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile,plain]
+  \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.88}
+  \copperband
+  \vspace{0.34cm}
+  \slidetitle{mineral}{6. ETL: transformación}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.58\textwidth}
+\begin{lstlisting}[style=codexpython]
+df = df_raw.copy()
+df = df.dropna(how="all")
+
+columnas_limpias = {
+    col: limpiar_nombre_columna(col)
+    for col in df.columns
+}
+
+df = df.rename(columns=columnas_limpias)
+df = df.rename(columns={df.columns[0]: "fecha"})
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \darkpanel{0.95\textwidth}{
+        {\color{arena}\bfseries Limpieza estructural}\\[4pt]
+        {\color{white}\small Se trabaja sobre una copia, se eliminan filas totalmente vacías y se estandarizan los nombres de columnas para que sean fáciles de usar en código.}
+      }
+      \vspace{0.18cm}
+      \panel{0.95\textwidth}{
+        \small Ejemplo: una columna con espacios, mayúsculas o acentos queda convertida a un nombre simple como \texttt{total\_chile}.
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile,plain]
+  \bgphoto{imagenes/chuquicamata.jpg}{white}{0.88}
+  \copperband
+  \vspace{0.34cm}
+  \slidetitle{mineral}{7. ETL: transformación analítica}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.58\textwidth}
+\begin{lstlisting}[style=codexpython]
+df = df[df["total_chile"].fillna(0) > 0].copy()
+
+df_largo = df.melt(
+    id_vars="fecha",
+    value_vars=columnas_empresas,
+    var_name="empresa_faena",
+    value_name="produccion_miles_tm_cobre_fino",
+)
+
+df_largo = df_largo.dropna(
+    subset=["produccion_miles_tm_cobre_fino"]
+)
+df_largo = df_largo[
+    df_largo["produccion_miles_tm_cobre_fino"] > 0
+].copy()
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \darkpanel{0.95\textwidth}{
+        {\color{arena}\bfseries Preparación para analizar}\\[4pt]
+        {\color{white}\small Se dejan solo meses con producción nacional informada y se crea el formato largo: una fila por mes y por faena.}
+      }
+      \vspace{0.18cm}
+      \panel{0.95\textwidth}{
+        \small Esta transformación permite comparar faenas, calcular rankings y hacer histogramas por empresa/faena.
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile,plain]
+  \bgphoto{imagenes/camion_mina.jpg}{carbon}{0.68}
+  \copperband
+  \vspace{0.34cm}
+  \slidetitle{white}{8. ETL: carga y resultados}
+
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.58\textwidth}
+\begin{lstlisting}[style=codexpython]
+df.to_csv(
+    DATOS_LIMPIOS / "produccion_cobre_mensual_limpio_ancho.csv",
+    index=False,
+)
+
+df_largo.to_csv(
+    DATOS_LIMPIOS / "produccion_cobre_mensual_limpio_largo.csv",
+    index=False,
+)
+
+resumen_empresas.to_csv(
+    DATOS_LIMPIOS / "resumen_produccion_por_empresa.csv"
+)
+\end{lstlisting}
+    \end{column}
+    \begin{column}{0.36\textwidth}
+      \darkpanel{0.95\textwidth}{
+        {\color{arena}\bfseries Qué se entrega}\\[4pt]
+        {\color{white}\small La fase de carga guarda los productos finales: dataset limpio en formato ancho, dataset largo y resumen por faena.}
+      }
+      \vspace{0.18cm}
+      \panel{0.95\textwidth}{
+        \small Estos archivos son la base para los gráficos, tablas, notebook ejecutado, informe y presentación.
+      }
+    \end{column}
+  \end{columns}
+\end{frame}
+
 \begin{frame}[plain]
   \bgphoto{imagenes/camion_mina.jpg}{carbon}{0.62}
   \copperband
   \vspace{0.4cm}
-  \slidetitle{white}{5. Radiografía del dataset}
+  \slidetitle{white}{9. Radiografía del dataset}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.32\textwidth}
@@ -344,7 +511,7 @@
   \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.90}
   \copperband
   \vspace{0.32cm}
-  \slidetitle{mineral}{6. Distribución de la producción nacional}
+  \slidetitle{mineral}{10. Distribución de la producción nacional}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.64\textwidth}
@@ -369,7 +536,7 @@
   \bgphoto{imagenes/chuquicamata.jpg}{white}{0.88}
   \copperband
   \vspace{0.32cm}
-  \slidetitle{mineral}{7. Concentración por empresa y faena}
+  \slidetitle{mineral}{11. Concentración por empresa y faena}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.58\textwidth}
@@ -403,7 +570,7 @@
   \bgphoto{imagenes/escondida.jpg}{carbon}{0.82}
   \copperband
   \vspace{0.32cm}
-  \slidetitle{white}{8. Relaciones con la producción nacional}
+  \slidetitle{white}{12. Relaciones con la producción nacional}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.49\textwidth}
@@ -436,7 +603,7 @@
   \bgphoto{imagenes/catodo_cobre.jpg}{white}{0.84}
   \copperband
   \vspace{0.34cm}
-  \slidetitle{mineral}{9. Correlaciones relevantes}
+  \slidetitle{mineral}{13. Correlaciones relevantes}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.48\textwidth}
@@ -476,7 +643,7 @@
   \bgphoto{imagenes/mineral_cobre.jpg}{papel}{0.88}
   \copperband
   \vspace{0.34cm}
-  \slidetitle{mineral}{10. Valores faltantes y meses sin dato}
+  \slidetitle{mineral}{14. Valores faltantes y meses sin dato}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.52\textwidth}
@@ -515,7 +682,7 @@
   \bgphoto{imagenes/camion_mina.jpg}{white}{0.84}
   \copperband
   \vspace{0.32cm}
-  \slidetitle{mineral}{11. Outliers: no todo valor extremo es error}
+  \slidetitle{mineral}{15. Outliers: no todo valor extremo es error}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.52\textwidth}
@@ -551,7 +718,7 @@
   \bgphoto{imagenes/escondida.jpg}{carbon}{0.78}
   \copperband
   \vspace{0.34cm}
-  \slidetitle{white}{12. Asimetría y concentración}
+  \slidetitle{white}{16. Asimetría y concentración}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.50\textwidth}
@@ -590,7 +757,7 @@
   \bgphoto{imagenes/catodo_cobre.jpg}{carbon}{0.76}
   \copperband
   \vspace{0.42cm}
-  \slidetitle{white}{13. Conclusiones}
+  \slidetitle{white}{17. Conclusiones}
 
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.52\textwidth}
@@ -616,7 +783,7 @@
   \bgphoto{imagenes/mineral_cobre.jpg}{white}{0.88}
   \copperband
   \vspace{0.35cm}
-  \slidetitle{mineral}{14. Fuentes y créditos visuales}
+  \slidetitle{mineral}{18. Fuentes y créditos visuales}
 
   \panel{0.92\textwidth}{
     \small
