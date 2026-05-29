@@ -13,3 +13,5 @@ __MACOSX/
 build/
 build_*/
 *.zip
+presentacion_latex/libreto_presentacion.pdf
+presentacion_latex/libreto_presentacion.tex
